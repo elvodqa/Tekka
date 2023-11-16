@@ -1,4 +1,4 @@
-﻿namespace Tekka.MathHelper;
+﻿namespace Tekka.Helper;
 
 public static class MathHelper
 {

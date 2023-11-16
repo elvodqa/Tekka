@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 using Silk.NET.OpenGL;
 using StbImageSharp;
 
-namespace elvo.Engine.Graphics;
+namespace Tekka.Graphics;
 
 public unsafe class Texture
 {
