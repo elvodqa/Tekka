@@ -43,7 +43,7 @@ public class Application
         var options = WindowOptions.Default;
         options.Size = new Vector2D<int>(1280, 720);
         options.Title = "Tekka";
-        options.VSync = true;
+        options.VSync = false;
         window = Window.Create(options);
 
         window.Load += OnLoad;
@@ -124,7 +124,11 @@ public class Application
         light3.SpecularColor = new Vector3(1.0f, 1.0f, 1.0f);
         light3.LightColor = new Vector3(1.0f, 1.0f, 1.0f);
         
-        lights = new LightSource[] {light1, light2, light3};
+        light4.Position = new Vector3(0.0f, 50.0f, -100.0f);
+        light4.DiffuseColor = new Vector3(2000.0f, 10.0f, 2000.0f);
+        light4.SpecularColor = new Vector3(1.0f, 1.0f, 1.0f);
+        
+        lights = new LightSource[] {light1, light2, light3, light4};
         
         // add 100 cubes in random positoon in 50x50x50 area
         
@@ -268,6 +272,18 @@ public class Application
             ImGui.Text($"Application average {1000.0f / ImGui.GetIO().Framerate:F3} ms/frame ({ImGui.GetIO().Framerate:F1} FPS)");
             ImGui.Text($"Drawable count: {drawables.Count}");
             ImGui.Text($"Camera position: {Camera.Position}");
+            
+            ImGui.Separator();
+            
+            if (ImGui.Button("Toggle VSync"))
+            {
+                var isV = window.VSync;
+                window.VSync = !isV;
+            }
+            ImGui.SameLine();
+            ImGui.Text($"VSync: {window.VSync}");
+            
+            ImGui.Separator();
             
             ImGui.DragFloat3("Light position", ref light1.Position, 0.1f);
             ImGui.DragFloat3("Light diffuse", ref light1.DiffuseColor, 0.1f);

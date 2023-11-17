@@ -82,14 +82,6 @@ public class DummyLight : Drawable
         DefaultShader.SetUniform("uModel", Transform.Model);
         DefaultShader.SetUniform("uView", camera.GetViewMatrix());
         DefaultShader.SetUniform("uProjection", camera.GetProjectionMatrix());
-        //DefaultShader.SetUniform("viewPos", camera.Position);
-        //DefaultShader.SetUniform("material.ambient", new Vector3(1.0f, 1f, 1f));
-        //DefaultShader.SetUniform("material.diffuse", new Vector3(1.0f, 1f, 1f));
-        //DefaultShader.SetUniform("material.specular", new Vector3(1f, 1f, 1f));
-        //DefaultShader.SetUniform("material.shininess", 32.0f);
-
-        
-        //DefaultShader.SetUniform("world_color", new Vector3(1f, 1f, 1f));
         
         Gl.DrawArrays(PrimitiveType.Triangles, 0, 36);
         
