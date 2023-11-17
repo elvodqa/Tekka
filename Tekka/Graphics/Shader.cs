@@ -17,7 +17,7 @@ public unsafe class Shader : IDisposable
         load(vertexSource, fragmentSource);
     }
 
-    public Shader(GL gl, string vertPath, string fragPath, bool a)
+    public Shader(GL gl, string vertPath, string fragPath)
     {
         this.gl = gl;
         string vertexSource = File.ReadAllText(vertPath);
@@ -25,7 +25,7 @@ public unsafe class Shader : IDisposable
         load(vertexSource, fragmentSource);
     }
     
-    public Shader(GL gl, string vertexSource, string fragmentSource)
+    public Shader(GL gl, string vertexSource, string fragmentSource, bool a)
     {
         this.gl = gl;
         load(vertexSource, fragmentSource);
@@ -73,6 +73,11 @@ public unsafe class Shader : IDisposable
     public void Use()
     {
         gl.UseProgram(Handle);
+    }
+    
+    public void Unbind()
+    {
+        gl.UseProgram(0);
     }
     
     public void SetUniform(string name, int value)

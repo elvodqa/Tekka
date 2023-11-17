@@ -50,4 +50,15 @@ public unsafe class Texture
         
         return texture;
     }
+    
+    public void Bind(GL gl)
+    {
+        gl.ActiveTexture(TextureUnit.Texture0);
+        gl.BindTexture(TextureTarget.Texture2D, Handle);
+    }
+    
+    public void Unbind(GL gl)
+    {
+        gl.BindTexture(TextureTarget.Texture2D, 0);
+    }
 }

@@ -29,6 +29,11 @@ public class VertexArrayObject<TVertexType, TIndexType> : IDisposable
     {
         _gl.BindVertexArray(_handle);
     }
+    
+    public void Unbind()
+    {
+        _gl.BindVertexArray(0);
+    }
 
     public void Dispose()
     {

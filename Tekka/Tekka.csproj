@@ -17,6 +17,7 @@
     
     <ItemGroup>
         <Content Include="Shaders/**/*.*" CopyToOutputDirectory="PreserveNewest" />
+        <Content Include="Assets/**/*.*" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 
 
