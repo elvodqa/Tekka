@@ -6,7 +6,7 @@ namespace Tekka.Graphics;
 
 public static class Loader
 {
-    public static Mesh LoadFromObj(GL gl, string modelPath, string texturePath)
+    public static Mesh LoadMeshFromObj(GL gl, string modelPath, string texturePath)
     {
         Mesh mesh = new Mesh();
         mesh.Transform = new Transform();
@@ -30,16 +30,85 @@ public static class Loader
         return mesh;
     }
 
-    public static Mesh LoadCube(GL gl)
+    public static Mesh LoadMeshAsCube(GL gl, string texturePath)
     {
         Mesh mesh = new Mesh();
+        mesh.Transform = new Transform();
+        mesh.Vertices = new Vertex[]
+        {
+            // Front
+            new Vertex {Position = new Vector3D<float>(-0.5f, -0.5f, 0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(0, 0)},
+            new Vertex {Position = new Vector3D<float>(0.5f, -0.5f, 0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(1, 0)},
+            new Vertex {Position = new Vector3D<float>(0.5f, 0.5f, 0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(1, 1)},
+            new Vertex {Position = new Vector3D<float>(-0.5f, 0.5f, 0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(0, 1)},
+            
+            // Back
+            new Vertex {Position = new Vector3D<float>(-0.5f, -0.5f, -0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(0, 0)},
+            new Vertex {Position = new Vector3D<float>(0.5f, -0.5f, -0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(1, 0)},
+            new Vertex {Position = new Vector3D<float>(0.5f, 0.5f, -0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(1, 1)},
+            new Vertex {Position = new Vector3D<float>(-0.5f, 0.5f, -0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(0, 1)},
+            
+            // Left
+            new Vertex {Position = new Vector3D<float>(-0.5f, -0.5f, -0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(0, 0)},
+            new Vertex {Position = new Vector3D<float>(-0.5f, -0.5f, 0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(1, 0)},
+            new Vertex {Position = new Vector3D<float>(-0.5f, 0.5f, 0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(1, 1)},
+            new Vertex {Position = new Vector3D<float>(-0.5f, 0.5f, -0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(0, 1)},
+            
+            // Right
+            new Vertex {Position = new Vector3D<float>(0.5f, -0.5f, -0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(0, 0)},
+            new Vertex {Position = new Vector3D<float>(0.5f, -0.5f, 0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(1, 0)},
+            new Vertex {Position = new Vector3D<float>(0.5f, 0.5f, 0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(1, 1)},
+            new Vertex {Position = new Vector3D<float>(0.5f, 0.5f, -0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(0, 1)},
+            
+            // Top
+            new Vertex {Position = new Vector3D<float>(-0.5f, 0.5f, -0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(0, 0)},
+            new Vertex {Position = new Vector3D<float>(0.5f, 0.5f, -0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(1, 0)},
+            new Vertex {Position = new Vector3D<float>(0.5f, 0.5f, 0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(1, 1)},
+            new Vertex {Position = new Vector3D<float>(-0.5f, 0.5f, 0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(0, 1)},
+            
+            // Bottom
+            new Vertex {Position = new Vector3D<float>(-0.5f, -0.5f, -0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(0, 0)},
+            new Vertex {Position = new Vector3D<float>(0.5f, -0.5f, -0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(1, 0)},
+            new Vertex {Position = new Vector3D<float>(0.5f, -0.5f, 0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(1, 1)},
+            new Vertex {Position = new Vector3D<float>(-0.5f, -0.5f, 0.5f), Color = new Vector3D<float>(1, 1, 1), TexCoord = new Vector2D<float>(0, 1)},
+        };
         
-        mesh.Ebo = new BufferObject<uint>(gl, Indices, BufferTargetARB.ElementArrayBuffer);
-        mesh.Vbo = new BufferObject<float>(gl, Vertices, BufferTargetARB.ArrayBuffer);
+        mesh.Indices = new uint[]
+        {
+            // Front
+            0, 1, 2,
+            2, 3, 0,
+            
+            // Back
+            4, 5, 6,
+            6, 7, 4,
+            
+            // Left
+            8, 9, 10,
+            10, 11, 8,
+            
+            // Right
+            12, 13, 14,
+            14, 15, 12,
+            
+            // Top
+            16, 17, 18,
+            18, 19, 16,
+            
+            // Bottom
+            20, 21, 22,
+            22, 23, 20,
+        };
+        
+        mesh.Vbo = new BufferObject<float>(gl, GetVertexData(mesh.Vertices), BufferTargetARB.ArrayBuffer);
+        mesh.Ebo = new BufferObject<uint>(gl, mesh.Indices, BufferTargetARB.ElementArrayBuffer);
+        
         mesh.Vao = new VertexArrayObject<float, uint>(gl, mesh.Vbo, mesh.Ebo);
-
-        mesh.Vao.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 6, 0);
-        mesh.Vao.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, 6, 3);
+        mesh.Vao.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 8, 0);
+        mesh.Vao.VertexAttributePointer(1, 3, VertexAttribPointerType.Float, 8, 3);
+        mesh.Vao.VertexAttributePointer(2, 2, VertexAttribPointerType.Float, 8, 6);
+        
+        mesh.Texture = Texture.LoadFromFile(gl, texturePath);
         
         mesh.Vao.Unbind();
         
@@ -125,57 +194,5 @@ public static class Loader
 
         return vertexData;
     }
-    
-    private static readonly float[] Vertices =
-    {
-        //X    Y      Z       Normals
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-
-        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-        0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-    };
-
-    private static readonly uint[] Indices =
-    {
-        0, 1, 3,
-        1, 2, 3
-    };
         
 }

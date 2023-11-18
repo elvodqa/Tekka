@@ -34,6 +34,7 @@ public class Application
     private LightSource[] lights = new LightSource[4];
 
     private Mesh saul;
+    private Mesh floor;
     private Shader lightShader;
     
     public void Run()
@@ -76,7 +77,7 @@ public class Application
         );
         
         //Start a camera at position 3 on the Z axis, looking at position -1 on the Z axis
-        Camera = new Camera(Vector3.UnitZ * -2, Vector3.UnitZ * -3, Vector3.UnitY, 19 / 9);
+        Camera = new Camera(Vector3.UnitZ * 3, Vector3.UnitZ * 15, Vector3.UnitY * 6, 19 / 9);
         
 
         light1.Position = new Vector3(0.0f, 0.0f, 0.0f);
@@ -102,8 +103,12 @@ public class Application
         
         lightShader = new Shader(Gl, "Shaders/model.vert", "Shaders/model.frag");
         
-        saul = Loader.LoadFromObj(Gl, "Assets/Models/saulgoodman.obj", "Assets/Models/saulgoodman.png");
+        saul = Loader.LoadMeshFromObj(Gl, "Assets/Models/saulgoodman.obj", "Assets/Models/saulgoodman.png");
         saul.Transform.Scale = new Vector3(0.05f, 0.05f, 0.05f);
+
+        floor = Loader.LoadMeshAsCube(Gl, "Assets/Textures/texture_02.png");
+        floor.Transform.Scale = new Vector3(20, 0.1f, 20);
+        floor.Transform.Position = new Vector3(0, -1, 0);
     }
 
     private void OnUpdate(double deltaTime)
@@ -135,8 +140,24 @@ public class Application
         
         lightShader.Use();
         
+        
+        Uniform(saul);
+        Renderer.DrawObj(Gl, saul);
+        
+        Uniform(floor);
+        Renderer.DrawCube(Gl, floor);
+        
+        lightShader.Unbind();
+        
+        DisplayFps();   
+        
+        controller.Render();
+    }
+
+    private void Uniform(Mesh mesh)
+    {
         #region Uniforms // TODO: fix
-        lightShader.SetUniform("uModel", saul.Transform.Model);
+        lightShader.SetUniform("uModel", mesh.Transform.Model);
         lightShader.SetUniform("uView", Camera.GetViewMatrix());
         lightShader.SetUniform("uProjection", Camera.GetProjectionMatrix());
         lightShader.SetUniform("viewPos", Camera.Position);
@@ -167,14 +188,6 @@ public class Application
         lightShader.SetUniform("world_color", new Vector3(0.4f, 0.4f, 0.4f));
         lightShader.SetUniform("modelTexture", 0);
         #endregion
-        
-        Renderer.DrawObj(Gl, saul);
-        
-        lightShader.Unbind();
-        
-        DisplayFps();   
-        
-        controller.Render();
     }
 
     private void OnMouseMove(IMouse mouse, Vector2 position)
