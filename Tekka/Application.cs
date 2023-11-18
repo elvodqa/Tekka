@@ -35,6 +35,8 @@ public class Application
 
     private Mesh saul;
     private Mesh floor;
+    private Mesh backWall;
+    private Mesh skybox;
     private Shader lightShader;
     
     public void Run()
@@ -86,17 +88,17 @@ public class Application
         light1.LightColor = new Vector3(1.0f, 1.0f, 1.0f);
         
         light2.Position = new Vector3(100.0f, 50.0f, -10.0f);
-        light2.DiffuseColor = new Vector3(2000.0f, 10.0f, 2000.0f);
+        light2.DiffuseColor =  new Vector3(2000.0f, 10.0f, 2000.0f);
         light2.SpecularColor = new Vector3(1.0f, 1.0f, 1.0f);
         light2.LightColor = new Vector3(1.0f, 1.0f, 1.0f);
         
         light3.Position = new Vector3(-100.0f, 50.0f, -10.0f);
-        light3.DiffuseColor = new Vector3(2000.0f, 10.0f, 2000.0f);
+        light3.DiffuseColor =  new Vector3(2000.0f, 10.0f, 2000.0f);
         light3.SpecularColor = new Vector3(1.0f, 1.0f, 1.0f);
         light3.LightColor = new Vector3(1.0f, 1.0f, 1.0f);
         
         light4.Position = new Vector3(0.0f, 50.0f, -100.0f);
-        light4.DiffuseColor = new Vector3(2000.0f, 10.0f, 2000.0f);
+        light4.DiffuseColor =  new Vector3(2000.0f, 10.0f, 2000.0f);
         light4.SpecularColor = new Vector3(1.0f, 1.0f, 1.0f);
         
         lights = new LightSource[] {light1, light2, light3, light4};
@@ -109,6 +111,14 @@ public class Application
         floor = Loader.LoadMeshAsCube(Gl, "Assets/Textures/texture_02.png");
         floor.Transform.Scale = new Vector3(20, 0.1f, 20);
         floor.Transform.Position = new Vector3(0, -1, 0);
+        
+        backWall = Loader.LoadMeshAsCube(Gl, "Assets/Textures/texture_02.png");
+        backWall.Transform.Scale = new Vector3(20, 20, 0.1f);
+        backWall.Transform.Position = new Vector3(0, 0, -10);
+        
+        skybox = Loader.LoadMeshAsCube(Gl, "Assets/Skybox/italy.png");
+        skybox.Transform.Scale = new Vector3(100, 100, 100);
+        skybox.Transform.Position = new Vector3(0, 0, 0);
     }
 
     private void OnUpdate(double deltaTime)
@@ -140,12 +150,17 @@ public class Application
         
         lightShader.Use();
         
-        
         Uniform(saul);
         Renderer.DrawObj(Gl, saul);
         
         Uniform(floor);
         Renderer.DrawCube(Gl, floor);
+        
+        Uniform(backWall);
+        Renderer.DrawCube(Gl, backWall);
+        
+        Uniform(skybox);
+        Renderer.DrawCube(Gl, skybox);
         
         lightShader.Unbind();
         
@@ -185,7 +200,7 @@ public class Application
         lightShader.SetUniform("light4.specular", lights[3].SpecularColor);
 
         
-        lightShader.SetUniform("world_color", new Vector3(0.4f, 0.4f, 0.4f));
+        lightShader.SetUniform("world_color", new Vector3(0.5f, 0.5f, 0.5f));
         lightShader.SetUniform("modelTexture", 0);
         #endregion
     }
