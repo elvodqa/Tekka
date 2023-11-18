@@ -8,6 +8,7 @@ using Silk.NET.Windowing;
 using Tekka.Graphics;
 using Tekka.Helper;
 using Silk.NET.OpenGL.Extensions.ImGui;
+using Shader = Tekka.Graphics.Shader;
 
 
 namespace Tekka;
@@ -26,17 +27,14 @@ public class Application
     private ImGuiController controller = null;
     private IInputContext inputContext = null;
 
-    public List<Drawable> drawables = new();
-
-    public Cube cube = new();
-    public DummyLight lightCube = new();
-    public Model model;
-
     private LightSource light1 = new();
     private LightSource light2 = new();
     private LightSource light3 = new();
     private LightSource light4 = new();
     private LightSource[] lights = new LightSource[4];
+
+    private Mesh saul;
+    private Shader lightShader;
     
     public void Run()
     {
@@ -79,36 +77,8 @@ public class Application
         
         //Start a camera at position 3 on the Z axis, looking at position -1 on the Z axis
         Camera = new Camera(Vector3.UnitZ * -2, Vector3.UnitZ * -3, Vector3.UnitY, 19 / 9);
-        model = new(Gl, "Assets/Models/saulgoodman.obj");
-        var random = new Random();
-        for (var i = 0; i < 100; i++)
-        {
-            var x = random.Next(-25, 25);
-            var y = random.Next(-25, 25);
-            var z = random.Next(-25, 25);
-            var dummy = new Cube();
-            dummy.Load(Gl);
-            dummy.Transform.Position = new Vector3(x, y, z);
-            dummy.Transform.Scale = new Vector3(0.5f, 0.5f, 0.5f);
-            drawables.Add(dummy);
-        } 
-        cube.Load(Gl);
-        lightCube.Load(Gl);
         
-        
-        
-        cube.Transform.Position = new Vector3(0.0f, -0.5f, 0.0f);
-        cube.Transform.Scale = new(20.0f, 0.2f, 20.0f);
-        
-        lightCube.Transform.Position = new Vector3(2.0f, 2.0f, 0.0f);
-        
-        model.Transform.Position = new Vector3(3.0f, 0.0f, 0.0f);
-        model.Transform.Scale = new(0.05f, 0.05f, 0.05f);
-        
-        drawables.Add(model);
-        drawables.Add(cube);
-        drawables.Add(lightCube);
-        
+
         light1.Position = new Vector3(0.0f, 0.0f, 0.0f);
         light1.DiffuseColor = new Vector3(80.0f, 2000.0f, 2000.0f);
         light1.SpecularColor = new Vector3(1.0f, 1.0f, 1.0f);
@@ -130,9 +100,10 @@ public class Application
         
         lights = new LightSource[] {light1, light2, light3, light4};
         
-        // add 100 cubes in random positoon in 50x50x50 area
+        lightShader = new Shader(Gl, "Shaders/model.vert", "Shaders/model.frag");
         
-        
+        saul = Loader.LoadFromObj(Gl, "Assets/Models/saulgoodman.obj", "Assets/Models/saulgoodman.png");
+        saul.Transform.Scale = new Vector3(0.05f, 0.05f, 0.05f);
     }
 
     private void OnUpdate(double deltaTime)
@@ -153,8 +124,6 @@ public class Application
                 //Move right
                 Camera.Position += Vector3.Normalize(Vector3.Cross(Camera.Front, Camera.Up)) * moveSpeed;
         }
-        
-        lightCube.Transform.Position = light1.Position;
     }
 
     private void OnRender(double deltaTime)
@@ -164,10 +133,44 @@ public class Application
         Gl.Enable(EnableCap.DepthTest);
         Gl.Clear((uint)(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
         
-        for (var i = 0; i < drawables.Count; i++)
-        {
-            drawables[i].Render(Gl, Camera, lights);
-        }
+        lightShader.Use();
+        
+        #region Uniforms // TODO: fix
+        lightShader.SetUniform("uModel", saul.Transform.Model);
+        lightShader.SetUniform("uView", Camera.GetViewMatrix());
+        lightShader.SetUniform("uProjection", Camera.GetProjectionMatrix());
+        lightShader.SetUniform("viewPos", Camera.Position);
+        
+        lightShader.SetUniform("material.ambient", new Vector3(1.0f, 0.5f, 0.31f));
+        lightShader.SetUniform("material.diffuse", new Vector3(1.0f, 0.5f, 0.31f));
+        lightShader.SetUniform("material.specular", new Vector3(0.5f, 0.5f, 0.5f));
+        lightShader.SetUniform("material.shininess", 32.0f);
+            
+        
+        lightShader.SetUniform("light1.position", lights[0].Position);
+        lightShader.SetUniform("light1.diffuse", lights[0].DiffuseColor);
+        lightShader.SetUniform("light1.specular", lights[0].SpecularColor);
+        
+        lightShader.SetUniform("light2.position", lights[1].Position);
+        lightShader.SetUniform("light2.diffuse", lights[1].DiffuseColor);
+        lightShader.SetUniform("light2.specular", lights[1].SpecularColor);
+        
+        lightShader.SetUniform("light3.position", lights[2].Position);
+        lightShader.SetUniform("light3.diffuse", lights[2].DiffuseColor);
+        lightShader.SetUniform("light3.specular", lights[2].SpecularColor);
+        
+        lightShader.SetUniform("light4.position", lights[3].Position);
+        lightShader.SetUniform("light4.diffuse", lights[3].DiffuseColor);
+        lightShader.SetUniform("light4.specular", lights[3].SpecularColor);
+
+        
+        lightShader.SetUniform("world_color", new Vector3(0.4f, 0.4f, 0.4f));
+        lightShader.SetUniform("modelTexture", 0);
+        #endregion
+        
+        Renderer.DrawObj(Gl, saul);
+        
+        lightShader.Unbind();
         
         DisplayFps();   
         
@@ -270,7 +273,6 @@ public class Application
             ImGui.Text($"Scene: {sceneName}");
             ImGui.Separator();
             ImGui.Text($"Application average {1000.0f / ImGui.GetIO().Framerate:F3} ms/frame ({ImGui.GetIO().Framerate:F1} FPS)");
-            ImGui.Text($"Drawable count: {drawables.Count}");
             ImGui.Text($"Camera position: {Camera.Position}");
             
             ImGui.Separator();
@@ -291,19 +293,7 @@ public class Application
             ImGui.DragFloat3("Light color", ref light1.LightColor, 0.1f);
             
             ImGui.Separator();
-
-            var transformPosition = model.Transform.Position;
-            ImGui.DragFloat3("Model position", ref transformPosition, 0.1f);
-            model.Transform.Position = transformPosition;
             
-            var transformScale = model.Transform.Scale;
-            ImGui.DragFloat3("Model scale", ref transformScale, 0.1f);
-            model.Transform.Scale = transformScale;
-            
-            var transformRotation = model.Transform.Rotation;
-            ImGui.DragFloat3("Model rotation", ref transformRotation, 0.1f);
-            model.Transform.Rotation = transformRotation;
-       
             
             ImGui.End();
         }
