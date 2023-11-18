@@ -285,7 +285,17 @@ public class Application
             // TODO: Rightclick to change pos
             ImGui.Text($"Scene: {sceneName}");
             ImGui.Separator();
-            ImGui.Text($"Application average {1000.0f / ImGui.GetIO().Framerate:F3} ms/frame ({ImGui.GetIO().Framerate:F1} FPS)");
+            //ImGui.Text($"Application average {1000.0f / ImGui.GetIO().Framerate:F3} ms/frame ({ImGui.GetIO().Framerate:F1} FPS)");
+            ImGui.Text("Application average ");
+            ImGui.SameLine(0.0f, 0.0f);
+            ImGui.TextColored(new Vector4(1.0f, 1.0f, 0.0f, 1.0f), $"{1000.0f / ImGui.GetIO().Framerate:F3} ms/frame");
+            ImGui.SameLine(0.0f, 0.0f);
+            ImGui.Text(" (");
+            ImGui.SameLine(0.0f, 0.0f);
+            ImGui.TextColored(new Vector4(1.0f, 1.0f, 0.0f, 1.0f), $"{ImGui.GetIO().Framerate:F1} FPS");
+            ImGui.SameLine(0.0f, 0.0f);
+            ImGui.Text(")");
+            ImGui.Separator();
             ImGui.Text($"Camera position: {Camera.Position}");
             
             ImGui.Separator();
